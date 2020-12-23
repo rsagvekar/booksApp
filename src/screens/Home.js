@@ -24,29 +24,29 @@ const Home = ({ navigation }) => {
 
     useEffect(() => {
         try {
-            firebase
-                .database()
-                .ref('Books')
-                .on('value', (dataSnapShot) => {
-                    let books = [];
-                    dataSnapShot.forEach((child) => {
-                            books.push({
-                                id: child.val().id,
-                                name: child.val().name,
-                                img: child.val().img,
-                                author: child.val().author,
-                                cat: child.val().cat,
-                                lang: child.val().lang,
-                                pages: child.val().pages,
-                                desc: child.val().desc,
-                                source: child.val().source
-                            });
-                            setAllBooks(books);
+            // firebase
+            //     .database()
+            //     .ref('Books')
+            //     .on('value', (dataSnapShot) => {
+            //         let books = [];
+            //         dataSnapShot.forEach((child) => {
+            //                 books.push({
+            //                     id: child.val().id,
+            //                     name: child.val().name,
+            //                     img: child.val().img,
+            //                     author: child.val().author,
+            //                     cat: child.val().cat,
+            //                     lang: child.val().lang,
+            //                     pages: child.val().pages,
+            //                     desc: child.val().desc,
+            //                     source: child.val().source
+            //                 });
+            //                 setAllBooks(books);
                             
-                    });
+            //         });
                     
                     
-                });
+            //     });
             // db.transaction((tx) => {
             //     tx.executeSql(
             //         'SELECT * FROM books',
@@ -59,6 +59,8 @@ const Home = ({ navigation }) => {
             //         }
             //     );
             // });
+
+
         } catch (error) {
             alert(error);
         }
@@ -189,6 +191,20 @@ const Home = ({ navigation }) => {
               }
             );
           });
+
+        db.transaction((tx) => {
+                tx.executeSql(
+                    'SELECT * FROM books',
+                    [],
+                    (tx, results) => {
+                        var temp = [];
+                        for (let i = 0; i < results.rows.length; ++i)
+                            temp.push(results.rows.item(i));
+                            setAllBooks(temp);
+                    }
+                );
+            });
+
     }, []);
 
     useLayoutEffect(() => {
