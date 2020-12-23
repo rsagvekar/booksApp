@@ -24,21 +24,51 @@ const search = ({navigation}) => {
     const [getScrollPosition, setScrollPosition] = useState(0);
     const[ cat, setCat] = useState('');
 
+    
+
     //console.warn(allbooks);
     const getItem = (val) => {
-        var temp = [];
-        db.transaction((tx) => {
-            tx.executeSql(
-                'SELECT * FROM books where category = ?',
-                [val],
-                (tx, results) => {
-                    var temp = [];
-                    for (let i = 0; i < results.rows.length; ++i)
-                        temp.push(results.rows.item(i));
-                        setAllBooks(temp);
-                }
-            );
-        });   
+        // var temp = [];
+        // db.transaction((tx) => {
+        //     tx.executeSql(
+        //         'SELECT * FROM books where category = ?',
+        //         [val],
+        //         (tx, results) => {
+        //             var temp = [];
+        //             for (let i = 0; i < results.rows.length; ++i)
+        //                 temp.push(results.rows.item(i));
+        //                 setAllBooks(temp);
+        //         }
+        //     );
+        // });   
+
+        try {
+            firebase
+                .database()
+                .ref('Books')
+                .on('value', (dataSnapShot) => {
+                    let books = [];
+                    dataSnapShot.forEach((child) => {
+                        if (val === child.val().cat) {
+                            books.push({
+                                id: child.val().id,
+                                name: child.val().name,
+                                img: child.val().img,
+                                author: child.val().author,
+                                cat: child.val().cat,
+                                lang: child.val().lang,
+                                pages: child.val().pages,
+                                desc: child.val().desc,
+                                source: child.val().source
+                            });
+                        }
+                    });
+    
+                    setAllBooks(books);
+                });
+        } catch (error) {
+            alert(error);
+        }
     };
 
     const getOpacity = () => {
